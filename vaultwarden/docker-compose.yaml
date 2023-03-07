@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  vaultwarden:
+    image: vaultwarden/server:alpine
+    volumes:
+      - ${vols}/vault-data:/data
+    restart: always
+    ports:
+      - 127.0.0.1:8888:80
+    environment:
+      - SIGNUPS_ALLOWED="false"
+        #- ADMIN_TOKEN=
+      - INVITATIONS_ALLOWED="true"
+    env_file:
+      - secrets.env

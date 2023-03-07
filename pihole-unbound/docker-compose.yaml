@@ -1,0 +1,47 @@
+# Authored by Talhah
+# Based of whatever I gathered on the internet
+version: "3"
+
+networks:
+  dns_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.2.0.0/24
+
+services:
+  unbound:
+    image: "mvance/unbound:latest"
+    container_name: unbound
+    restart: unless-stopped
+    hostname: "unbound"
+    volumes:
+     - "${vols}/pi-unbound/unbound:/opt/unbound/etc/unbound/"
+    ports:
+      - "127.0.0.1:5053:5053/tcp"
+      - "127.0.0.1:5053:5053/udp"
+    networks:
+      dns_net:
+        ipv4_address: 10.2.0.200
+
+  pihole:
+    depends_on: [unbound]
+    container_name: pihole
+    image: pihole/pihole:latest
+    restart: unless-stopped
+    hostname: "pihole"
+    ports:
+      - "127.0.0.1:6969:53/tcp"
+      - "127.0.0.1:6969:53/udp"
+      - "127.0.0.1:8069:80/tcp"
+    environment:
+      TZ: 'Asia/Qatar'
+      Serverip: 10.2.0.100 #ip of the pihole
+    volumes:
+      - '${vols}/pi-unbound/etc-pihole:/etc/pihole'
+      - '${vols}/pi-unbound/etc-dnsmasq.d:/etc/dnsmasq.d'
+    cap_add:
+      - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
+    networks:
+      dns_net:
+        ipv4_address: 10.2.0.100
