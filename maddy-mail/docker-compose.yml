@@ -1,0 +1,21 @@
+version: "3.5"
+
+services:
+  maddy:
+    image: foxcpp/maddy:latest
+    ports:
+      - "25:25"
+      - "143:143"
+      - "587:587"
+      - "993:993"
+    volumes:
+      - ${vols}/maddy-data:/data
+    environment:
+        # REPLACE DOMAINS WITH YOURS
+      - MADDY_HOSTNAME=mx.systuner.com
+      - MADDY_DOMAIN=systuner.com
+    deploy:
+      replicas: 1
+      resources:
+        limits: { cpus: '0.2', memory: '32M' }
+        reservations: { cpus: '0.05', memory: '16M' }
