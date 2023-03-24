@@ -3,6 +3,7 @@ version: "3.5"
 services:
   maddy:
     image: foxcpp/maddy:latest
+    restart: always
     ports:
       - "25:25"
       - "143:143"
