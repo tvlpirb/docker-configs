@@ -10,6 +10,8 @@ services:
       - '443:443'
     volumes:
       - ${vols}/nginx-pm/data:/data
+      - /home/eman/www:/eman
+      - /home/hajer/www:/hajer
       - ${vols}/nginx-pm/letsencrypt:/etc/letsencrypt
     # This is added so that we can see host ports and other
     # containers which are bound to the host, typically this
