@@ -1,0 +1,29 @@
+services:
+  miniflux:
+    image: miniflux/miniflux:latest
+    ports:
+      - "127.0.0.1:6792:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - secrets.env
+    environment:
+      #- DATABASE_URL=postgres://miniflux:passw0rd@db/miniflux?sslmode=disable
+      - RUN_MIGRATIONS=1
+      - BASE_URL=https://rss.systuner.com
+        #- CREATE_ADMIN=1
+        #- ADMIN_USERNAME=admin
+        # - ADMIN_PASSWORD=test123
+  db:
+    image: postgres:15
+    env_file:
+      - secrets.env
+    volumes:
+      - ${vols}/miniflux-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "miniflux"]
+      interval: 10s
+      start_period: 30s
+volumes:
+  miniflux-db:
